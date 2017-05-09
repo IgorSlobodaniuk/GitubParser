@@ -1,0 +1,35 @@
+.col-sm-9 .row {
+    font-size: 20px;
+    padding: 10px 50px;
+}
+
+.repo_info{
+    padding: 10px;
+    margin-left: 30%;
+}
+
+.repo_info .row{
+    border:1px solid #ccc;
+    box-shadow: 1px 1px 14px #999;
+    height: 30px;
+}
+
+#load_more {
+    margin-left: 60%;
+}
+
+#footer{
+    height: 50px;
+    background: #fff url("http://highgategospelchapel.com/footer-fade.jpg") repeat-x right top;
+}
+
+#repos_header {
+    text-align: center;
+    margin: 10px auto;
+    font-size: 20px;
+    margin-left: 30%;
+}
+
+#not_found {
+    color: red;
+}

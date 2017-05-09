@@ -1,0 +1,60 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+{% for i in repo_info %}
+    <div class="repo_info">
+        <div class="row">
+            <div class="col-sm-5">Name</div>
+            <div class="col-sm-7">{{ i.repo_name }}</div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-5">URL</div>
+            <div class="col-sm-7"><a href="{{ i.repo_url }}">{{ i.repo_url }}</a></div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-5">Language</div>
+            <div class="col-sm-7">{{ i.language }}</div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-5">Forks count</div>
+            <div class="col-sm-7">{{ i.repo_forks }}</div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-5">Issues count</div>
+            <div class="col-sm-7">{{ i.repo_issues_count }}</div>
+        </div>
+    </div>
+{% endfor %}
+
+<div id="load_{{ next_page }}">
+    {% if next_page %}
+        <form id="load_more" action="/next_page" method="get">
+            {% csrf_token %}
+            <input type="hidden" name="user" value="{{ user }}">
+            <input type="hidden" name="next_page" value="{{ next_page }}">
+            <input type="submit" value="Load more" />
+        </form>
+    {% endif %}
+</div>
+
+<script type="text/javascript">
+    var frm = $('#load_more');
+    frm.submit(function (ev) {
+        $.ajax({
+            type: frm.attr('method'),
+            url: frm.attr('action'),
+            data: frm.serialize(),
+            success: function (data) {
+                $("#load_{{ next_page }}").html(data);
+            }
+        });
+
+        ev.preventDefault();
+    });
+</script>

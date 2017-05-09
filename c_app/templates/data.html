@@ -1,0 +1,163 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'style.css' %}" />
+
+<script type="text/javascript">
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+        var data = google.visualization.arrayToDataTable({{ stat_language|safe }});
+
+        var options = {
+          title: 'Statistic by languages'
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+        chart.draw(data, options);
+        }
+
+
+    google.charts.load('current', {packages: ['corechart', 'bar']});
+    google.charts.setOnLoadCallback(drawMultSeries);
+
+    function drawMultSeries() {
+        var data = google.visualization.arrayToDataTable({{ stat_forks|safe }});
+
+        var options = {
+        title: 'Statistic by forks',
+        chartArea: {width: '50%'},
+        hAxis: {
+          title: 'Forks',
+          minValue: 0
+        },
+        vAxis: {
+          title: 'Repository'
+        }
+    };
+
+    var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
+    chart.draw(data, options);
+    }
+
+
+
+
+</script>
+
+<meta charset="ISO-8859-1">
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <img src="http://www.swarthmore.edu/sites/default/files/assets/images/information-technology-services/github-logos-278px.png">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-7">
+            <div align="center">
+                <form action="/search_company/" method="post" class="form-inline">
+                    {% csrf_token %}
+                    {{ form }}
+                    <input type="submit" value="Search" class="btn btn-default" />
+                </form>
+            </div>
+
+            <span> {{ not_found }} </span>
+            <hr>
+
+            <div class="row">
+                <div class="col-sm-3">
+                    <img src="{{ avatar }}" width="100%">
+                </div>
+                <div class="col-sm-9">
+                    <div class="row">
+                        <div class="col-sm-6">name</div>
+                        <div class="col-sm-6">{{ nicname }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">Email</div>
+                        <div class="col-sm-6">{{ email }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">Count of repositories</div>
+                        <div class="col-sm-6">{{ repos_count }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="repos_header"> Information about repositories </div>
+            {% for i in repo_info %}
+                <div class="repo_info">
+                    <div class="row">
+                        <div class="col-sm-5">Name</div>
+                        <div class="col-sm-7">{{ i.repo_name }}</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-5">URL</div>
+                        <div class="col-sm-7"><a href="{{ i.repo_url }}">{{ i.repo_url }}</a></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-5">Language</div>
+                        <div class="col-sm-7">{{ i.language }}</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-5">Forks count</div>
+                        <div class="col-sm-7">{{ i.repo_forks }}</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-5">Issues count</div>
+                        <div class="col-sm-7">{{ i.repo_issues_count }}</div>
+                    </div>
+                </div>
+            {% endfor %}
+
+
+            <div id="load_{{ next_page }}">
+                {% if next_page %}
+                    <form id="load_more" action="/next_page" method="get">
+                        {% csrf_token %}
+                        <input type="hidden" name="user" value="{{ user }}">
+                        <input type="hidden" name="next_page" value="{{ next_page }}">
+                        <input type="submit" value="Load more">
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-sm-5">
+            <div id="piechart" style="width: 100%; height: 350px;"></div>
+            <div id="chart_div"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12" id="footer"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var frm = $('#load_more');
+    frm.submit(function (ev) {
+        $.ajax({
+            type: frm.attr('method'),
+            url: frm.attr('action'),
+            data: frm.serialize(),
+            success: function (data) {
+                $("#load_{{ next_page }}").html(data);
+            }
+        });
+
+        ev.preventDefault();
+    });
+</script>
