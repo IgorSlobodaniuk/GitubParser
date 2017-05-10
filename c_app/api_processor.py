@@ -12,9 +12,6 @@ def get_general_data(user):
     if api_data.get('message') == 'Not Found':
         return
 
-    if not api_data['name']:
-        return 'empty'
-
     user_email = api_data['email'] if api_data['email'] else '-'
 
     return {
