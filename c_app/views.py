@@ -14,11 +14,7 @@ def get_user(request):
             user = form.cleaned_data['enter_company']
             org_info = get_general_data(user)
 
-            if org_info == 'empty':
-                message = 'Found user without any information by parameters "{}"'.format(user)
-                return render(request, 'index.html', {'form': form, 'not_found': message})
-
-            elif org_info:
+            if org_info:
                 stat_language, stat_forks = get_statistic(user)
                 repo_info, next_page = get_repo_data(user, 1)
 
